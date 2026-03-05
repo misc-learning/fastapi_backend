@@ -1,6 +1,6 @@
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 
 app = FastAPI()
@@ -25,7 +25,9 @@ def get_latest_shipment(shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
 
 
 @app.get("/shipment/{id}")
-def get_shipment(id: int, shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
+def get_shipment(
+    id: int, shipments: dict[int, dict[str, Any]]
+) -> dict[str, Any] | HTTPException:
     """Get shipment.
 
     Args:
@@ -36,7 +38,12 @@ def get_shipment(id: int, shipments: dict[int, dict[str, Any]]) -> dict[str, Any
         dict[str, Any]: _description_
 
     """
-    return shipments[id]
+    if id in shipments:
+        return shipments[id]
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="ID not found in database"
+        )
 
 
 @app.get("/scalar", include_in_schema=False)
