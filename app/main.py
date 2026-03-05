@@ -124,17 +124,13 @@ def put_shipment(
 @app.patch("shipment")
 def patch_shipment(
     id: int,
-    article: str | None = None,
-    weight: float | None = None,
-    status: str | None = None,
+    body: dict[str, Any],
 ) -> dict[str, Any]:
     """Update shipment.
 
     Args:
         id (int): _description_
-        article (str): _description_
-        weight (float): _description_
-        status (str): _description_
+        body (dict[str, Any]): _description_
 
     Returns:
         dict[str, Any]: _description_
@@ -142,12 +138,14 @@ def patch_shipment(
     """
     shipment = shipments[id]
 
-    if article:
-        shipment["article"] = article
-    if weight:
-        shipment["weight"] = weight
-    if status:
-        shipment["status"] = status
+    if body:
+        shipment.update(body)
+    # if article:
+    #     shipment["article"] = article
+    # if weight:
+    #     shipment["weight"] = weight
+    # if status:
+    #     shipment["status"] = status
 
     shipments[id] = shipment
 
