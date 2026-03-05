@@ -3,6 +3,8 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 
+from app.schema import Shipment
+
 app = FastAPI()
 
 
@@ -26,7 +28,7 @@ def get_latest_shipment(
     return shipments[max_id]
 
 
-@app.get("/shipment/{id}")
+@app.get("/shipment/{id}", response_model=Shipment)
 def get_shipment(
     id: int,
     shipments: dict[int, dict[str, Any]],
@@ -70,14 +72,12 @@ def get_shipment_field(
 # we can use same endpoint for get and post, e.g here it is shipment
 @app.post("/shipment")
 def post_shipment(
-    article: str,
-    weight: float,
+    shipment: Shipment,
 ) -> dict[str, int]:
     """Post shipment.
 
     Args:
-        article (str): _description_
-        weight (float): _description_
+        shipment (Shipment): _description_
 
     Raises:
         HTTPException: _description_
@@ -86,19 +86,23 @@ def post_shipment(
         dict[str, int]: _description_
 
     """
-    if weight > 30:
+    if shipment.weight > 30:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Weight greater than 30 kg is not acceptable",
         )
 
     new_id = max(shipments.keys()) + 1
-    shipments[new_id] = {"article": article, "weight": weight, status: "placed"}  # type: ignore
+    shipments[new_id] = {  # type: ignore
+        "article": shipment.article,
+        "weight": shipment.weight,
+        status: "placed",
+    }  # type: ignore
 
     return {"id": new_id}
 
 
-@app.put("shipment")
+@app.put("shipment", response_model=Shipment)
 def put_shipment(
     id: int,
     article: str,
@@ -121,10 +125,10 @@ def put_shipment(
     return shipments[id]
 
 
-@app.patch("shipment")
+@app.patch("shipment", response_model=Shipment)
 def patch_shipment(
     id: int,
-    body: dict[str, Any],
+    body: dict[str, Shipment],
 ) -> dict[str, Any]:
     """Update shipment.
 
