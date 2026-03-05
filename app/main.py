@@ -6,29 +6,37 @@ from scalar_fastapi import get_scalar_api_reference
 app = FastAPI()
 
 
+shipments = {
+    354: {"weight": 0.8, "article": "pen", "status": "placed"},
+    1548: {"weight": 1.2, "article": "notebook", "status": "in transit"},
+}
+
+
 @app.get("/shipment/latest")
-def get_latest_shipment() -> dict[str, Any]:
+def get_latest_shipment(shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
     """Get latest shipment.
 
     Returns:
         dict[str, Any]: _description_
 
     """
-    return {"id": 354, "weight": 0.8, "article": "pen", "status": "placed"}
+    max_id = max(shipments.keys())
+    return shipments[max_id]
 
 
 @app.get("/shipment/{id}")
-def get_shipment(id: int) -> dict[str, Any]:
+def get_shipment(id: int, shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
     """Get shipment.
 
     Args:
         id (int): _description_
+        shipments (dict): _description_
 
     Returns:
         dict[str, Any]: _description_
 
     """
-    return {"id": id, "weight": 1.2, "article": "notebook", "status": "in transit"}
+    return shipments[id]
 
 
 @app.get("/scalar", include_in_schema=False)
