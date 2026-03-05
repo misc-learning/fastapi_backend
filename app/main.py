@@ -13,7 +13,9 @@ shipments = {
 
 
 @app.get("/shipment/latest")
-def get_latest_shipment(shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
+def get_latest_shipment(
+    shipments: dict[int, dict[str, Any]],
+) -> dict[str, Any]:
     """Get latest shipment.
 
     Returns:
@@ -25,7 +27,10 @@ def get_latest_shipment(shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
 
 
 @app.get("/shipment/{id}")
-def get_shipment(id: int, shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
+def get_shipment(
+    id: int,
+    shipments: dict[int, dict[str, Any]],
+) -> dict[str, Any]:
     """Get shipment.
 
     Args:
@@ -45,7 +50,10 @@ def get_shipment(id: int, shipments: dict[int, dict[str, Any]]) -> dict[str, Any
 
 
 @app.get("shipment/{field}")
-def get_shipment_field(field: str, id: int) -> dict[str, Any]:
+def get_shipment_field(
+    field: str,
+    id: int,
+) -> dict[str, Any]:
     """Get a specific field of shipment e.g. content or weight.
 
     Args:
@@ -61,7 +69,10 @@ def get_shipment_field(field: str, id: int) -> dict[str, Any]:
 
 # we can use same endpoint for get and post, e.g here it is shipment
 @app.post("/shipment")
-def post_shipment(article: str, weight: float) -> dict[str, int]:
+def post_shipment(
+    article: str,
+    weight: float,
+) -> dict[str, int]:
     """Post shipment.
 
     Args:
@@ -88,7 +99,12 @@ def post_shipment(article: str, weight: float) -> dict[str, int]:
 
 
 @app.put("shipment")
-def put_shipment(id: int, article: str, weight: float, status: str) -> dict[str, Any]:
+def put_shipment(
+    id: int,
+    article: str,
+    weight: float,
+    status: str,
+) -> dict[str, Any]:
     """Update shipment.
 
     Args:
@@ -102,6 +118,39 @@ def put_shipment(id: int, article: str, weight: float, status: str) -> dict[str,
 
     """
     shipments[id] = {"article": article, "weight": weight, status: "out for delivery"}
+    return shipments[id]
+
+
+@app.patch("shipment")
+def patch_shipment(
+    id: int,
+    article: str | None = None,
+    weight: float | None = None,
+    status: str | None = None,
+) -> dict[str, Any]:
+    """Update shipment.
+
+    Args:
+        id (int): _description_
+        article (str): _description_
+        weight (float): _description_
+        status (str): _description_
+
+    Returns:
+        dict[str, Any]: _description_
+
+    """
+    shipment = shipments[id]
+
+    if article:
+        shipment["article"] = article
+    if weight:
+        shipment["weight"] = weight
+    if status:
+        shipment["status"] = status
+
+    shipments[id] = shipment
+
     return shipments[id]
 
 
