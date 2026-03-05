@@ -25,9 +25,7 @@ def get_latest_shipment(shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
 
 
 @app.get("/shipment/{id}")
-def get_shipment(
-    id: int, shipments: dict[int, dict[str, Any]]
-) -> dict[str, Any] | HTTPException:
+def get_shipment(id: int, shipments: dict[int, dict[str, Any]]) -> dict[str, Any]:
     """Get shipment.
 
     Args:
@@ -38,12 +36,55 @@ def get_shipment(
         dict[str, Any]: _description_
 
     """
-    if id in shipments:
-        return shipments[id]
-    else:
+    if id not in shipments:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="ID not found in database"
         )
+
+    return shipments[id]
+
+
+# we can use same endpoint for get and post, e.g here it is shipment
+@app.post("/shipment")
+def post_shipment(article: str, weight: float) -> dict[str, int]:
+    """Post shipment.
+
+    Args:
+        article (str): _description_
+        weight (float): _description_
+
+    Raises:
+        HTTPException: _description_
+
+    Returns:
+        dict[str, int]: _description_
+
+    """
+    if weight > 30:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Weight greater than 30 kg is not acceptable",
+        )
+
+    new_id = max(shipments.keys()) + 1
+    shipments[new_id] = {"article": article, "weight": weight, status: "placed"}  # type: ignore
+
+    return {"id": new_id}
+
+
+@app.get("shipment/{field}")
+def get_shipment_field(field: str, id: int) -> dict[str, Any]:
+    """Get a specific field of shipment e.g. content or weight.
+
+    Args:
+        field (str): _description_
+        id (int): _description_
+
+    Returns:
+        dict[str, Any]: _description_
+
+    """
+    return {field: shipments[id][field]}
 
 
 @app.get("/scalar", include_in_schema=False)
