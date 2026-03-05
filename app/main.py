@@ -152,6 +152,32 @@ def patch_shipment(
     return shipments[id]
 
 
+@app.delete("/shipment")
+def delete_shipment(
+    id: int,
+) -> dict[str, str]:
+    """Delete shipment.
+
+    Args:
+        id (int): _description_
+
+    Raises:
+        HTTPException: _description_
+
+    Returns:
+        dict[str, str]: _description_
+
+    """
+    if id:
+        shipments.pop(id)
+        return {"detail": f"shipment {id} is deleted"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"shipment {id} is not found in the database",
+        )
+
+
 @app.get("/scalar", include_in_schema=False)
 def get_scalar_docs():
     """Get documentation in scalar format.
