@@ -44,6 +44,21 @@ def get_shipment(id: int, shipments: dict[int, dict[str, Any]]) -> dict[str, Any
     return shipments[id]
 
 
+@app.get("shipment/{field}")
+def get_shipment_field(field: str, id: int) -> dict[str, Any]:
+    """Get a specific field of shipment e.g. content or weight.
+
+    Args:
+        field (str): _description_
+        id (int): _description_
+
+    Returns:
+        dict[str, Any]: _description_
+
+    """
+    return {field: shipments[id][field]}
+
+
 # we can use same endpoint for get and post, e.g here it is shipment
 @app.post("/shipment")
 def post_shipment(article: str, weight: float) -> dict[str, int]:
@@ -72,19 +87,22 @@ def post_shipment(article: str, weight: float) -> dict[str, int]:
     return {"id": new_id}
 
 
-@app.get("shipment/{field}")
-def get_shipment_field(field: str, id: int) -> dict[str, Any]:
-    """Get a specific field of shipment e.g. content or weight.
+@app.put("shipment")
+def put_shipment(id: int, article: str, weight: float, status: str) -> dict[str, Any]:
+    """Update shipment.
 
     Args:
-        field (str): _description_
         id (int): _description_
+        article (str): _description_
+        weight (float): _description_
+        status (str): _description_
 
     Returns:
         dict[str, Any]: _description_
 
     """
-    return {field: shipments[id][field]}
+    shipments[id] = {"article": article, "weight": weight, status: "out for delivery"}
+    return shipments[id]
 
 
 @app.get("/scalar", include_in_schema=False)
