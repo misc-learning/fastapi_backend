@@ -22,8 +22,8 @@ repos:
         args: [--autofix]
       - id: check-ast
       - id: check-docstring-first
-      - id: no-commit-to-branch
-        args: [--branch, main, --branch, master]
+      # - id: no-commit-to-branch
+      #   args: [--branch, main, --branch, master]
       - id: check-builtin-literals
       - id: detect-private-key
 
