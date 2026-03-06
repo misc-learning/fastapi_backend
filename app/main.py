@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 
-from app.schema import Shipment
+from app.schema import ShipmentCreate, ShipmentRead, ShipmentUpdate
 
 app = FastAPI()
 
@@ -28,11 +28,11 @@ def get_latest_shipment(
     return shipments[max_id]
 
 
-@app.get("/shipment/{id}", response_model=Shipment)
+@app.get("/shipment/{id}", response_model=ShipmentRead)
 def get_shipment(
     id: int,
     shipments: dict[int, dict[str, Any]],
-) -> dict[str, Any]:
+):
     """Get shipment.
 
     Args:
@@ -72,7 +72,7 @@ def get_shipment_field(
 # we can use same endpoint for get and post, e.g here it is shipment
 @app.post("/shipment")
 def post_shipment(
-    shipment: Shipment,
+    shipment: ShipmentCreate,
 ) -> dict[str, int]:
     """Post shipment.
 
@@ -102,13 +102,13 @@ def post_shipment(
     return {"id": new_id}
 
 
-@app.put("shipment", response_model=Shipment)
+@app.put("shipment", response_model=ShipmentCreate)
 def put_shipment(
     id: int,
     article: str,
     weight: float,
     status: str,
-) -> dict[str, Any]:
+):
     """Update shipment.
 
     Args:
@@ -125,11 +125,11 @@ def put_shipment(
     return shipments[id]
 
 
-@app.patch("shipment", response_model=Shipment)
+@app.patch("shipment", response_model=ShipmentRead)
 def patch_shipment(
     id: int,
-    body: dict[str, Shipment],
-) -> dict[str, Any]:
+    body: dict[str, ShipmentUpdate],
+):
     """Update shipment.
 
     Args:
